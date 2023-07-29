@@ -17,7 +17,7 @@ from web3.gas_strategies.time_based import medium_gas_price_strategy
 ################################################################################
 # Wallet functionality
 
-def generate_account():
+def generate_account(w3):
     """Create a digital wallet and Ethereum account from a mnemonic seed phrase."""
     # Fetch mnemonic from environment variable.
     mnemonic = os.getenv("MNEMONIC")
@@ -45,7 +45,7 @@ def get_balance(w3, address):
     return ether
 
 
-def send_transaction(w3, account, to, wage):
+def send_transaction(w3, account, receiver, wage):
     """Send an authorized transaction to the Ganache blockchain."""
     # Set gas price strategy
     w3.eth.setGasPriceStrategy(medium_gas_price_strategy)
@@ -54,15 +54,15 @@ def send_transaction(w3, account, to, wage):
     value = w3.toWei(wage, "ether")
 
     # Calculate gas estimate
-    gasEstimate = w3.eth.estimateGas({"to": to, "from": account.address, "value": value})
+    gasEstimate = w3.eth.estimateGas({"to": receiver, "from": account.address, "value": value})
 
     # Construct a raw transaction
     raw_tx = {
-        "to": to,
+        "to": receiver,
         "from": account.address,
         "value": value,
         "gas": gasEstimate,
-        "gasPrice": 0,
+        "gasPrice": 875000000,
         "nonce": w3.eth.getTransactionCount(account.address)
     }
 
